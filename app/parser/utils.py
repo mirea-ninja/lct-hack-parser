@@ -7,7 +7,7 @@ from app.config import config
 DADATA_API_KEY = config.BACKEND_DADATA_TOKEN
 
 
-def get_address_cords(address: str) -> tuple | None:
+def get_address_cords(address: str) -> tuple:
     url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address"
     headers = {
         "Authorization": f"Token {DADATA_API_KEY}",
@@ -24,4 +24,4 @@ def get_address_cords(address: str) -> tuple | None:
             float(resp["suggestions"][0]["data"]["geo_lat"]),
             float(resp["suggestions"][0]["data"]["geo_lon"]),
         )
-    return None
+    return None, None

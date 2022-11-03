@@ -6,7 +6,7 @@ from app.models.exceptions import add_exception_handlers, catch_unhandled_except
 from app.routers.cian import router as parser_router
 
 tags_metadata = [
-    {"name": "parser", "description": "Работа с парсингом parser.ru"},
+    {"name": "parser", "description": "Работа с парсингом cian.ru"},
 ]
 
 app = FastAPI(
