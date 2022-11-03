@@ -8,6 +8,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 def create() -> webdriver.Chrome:
     chrome_options = webdriver.ChromeOptions()
     prefs = {
+        "profile.default_content_settings.popups": 0,
         "profile.managed_default_content_settings.images": 2,
         "download": {
             "prompt_for_download": False,

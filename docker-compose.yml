@@ -30,7 +30,7 @@ services:
 
   chrome:
     image: selenium/standalone-chrome:latest
-    shm_size: 2gb
+    shm_size: 6gb
     volumes:
       - ./app/parser/data/:/tmp/data
     ports:
