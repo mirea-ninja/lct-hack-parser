@@ -26,3 +26,12 @@ services:
       ENV: development
     networks:
       - default
+
+
+  chrome:
+    image: selenium/standalone-chrome:latest
+    shm_size: 2gb
+    volumes:
+      - ./app/parser/data/:/tmp/data
+    ports:
+      - "4444:4444"

@@ -6,8 +6,8 @@ from app.models.search import SearchBase
 from app.services.auth import verify_access_token
 from app.services.cian import CianService
 
-router = APIRouter(dependencies=[Depends(verify_access_token)])
-
+# router = APIRouter(dependencies=[Depends(verify_access_token)])
+router = APIRouter()
 
 @router.post(
     "/parse",

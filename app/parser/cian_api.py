@@ -6,6 +6,7 @@ import os
 import time
 from dataclasses import dataclass
 from enum import IntEnum
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -181,7 +182,7 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     url = get_url_by_cords(lat, lon, search_params, url_type=URLType.EXPORT)
 
-    downloaded_file = os.path.join(driver.DOWNLOAD_DIR, "offers.xlsx")
+    downloaded_file = os.path.join("/app/app/parser/data/offers.xlsx")
 
     with contextlib.closing(driver.create()) as chromium:
         chromium.get(url)
