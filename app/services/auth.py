@@ -18,5 +18,5 @@ def verify_access_token(access_token: HTTPAuthorizationCredentials = Depends(bea
             algorithms=[config.BACKEND_JWT_ALGORITHM],
             options={"verify_aud": False},
         )
-    except JOSEError:
-        raise HTTPException(401, "Неверный токен авторизации", headers={"WWW-Authenticate": "Bearer"})
+    except JOSEError as e:
+        raise HTTPException(401, "Неверный токен авторизации", headers={"WWW-Authenticate": "Bearer"}) from e
