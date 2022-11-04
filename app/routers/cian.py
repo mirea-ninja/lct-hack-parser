@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from starlette import status
 
 from app.models import ApartmentBase
@@ -19,4 +19,7 @@ router = APIRouter(dependencies=[Depends(verify_access_token)])
     # responses={},
 )
 def parse(search: SearchBase, cian_service: CianService = Depends()):
-    return cian_service.start_parse(search=search)
+    try:
+        return cian_service.start_parse(search=search)
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
