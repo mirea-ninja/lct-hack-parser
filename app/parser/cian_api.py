@@ -242,11 +242,12 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
             "ceiling_height",
             "elevator",
             "chute",
-            "project_name",
         ]
     )
 
-    # Concat dataframes
+    if "project_name" in df.columns:
+        df = df.drop(columns=["project_name"])
+
     df = pd.concat([df, df["address"].str.split(", ", expand=True)], axis=1)
 
     df = df.drop_duplicates()
