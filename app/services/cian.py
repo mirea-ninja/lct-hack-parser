@@ -49,7 +49,7 @@ class CianService:
                 has_balcony=None if pd.isna(a["balcony"]) else bool(a["balcony"]),
                 distance_to_metro=None if pd.isna(a["metro"]) else a["metro"],
                 quality=None if pd.isna(a["repair"]) else RepairType(a["repair"]),
-                m2price=None,
+                m2price=a["price"] / a["area"],
                 price=a["price"],
             )
             for a in df.to_dict(orient="records")
