@@ -1,11 +1,10 @@
 import pandas as pd
 import requests
 from fastapi.encoders import jsonable_encoder
-from starlette.exceptions import HTTPException
 
 from app.config import config
 from app.models import ApartmentBase
-from app.models.enums import Walls
+from app.models.enums import RepairType, Segment, Walls
 from app.models.search import SearchBase
 from app.parser.cian_api import SearchParams, parse_analogs
 from app.parser.utils import get_address_cords
@@ -24,23 +23,33 @@ class CianService:
         )
 
         df = parse_analogs(address, search_params)
+
+        addresses = df["address"].to_list()
+        unique_addresses = list(set(addresses))
+
+        cords = [get_address_cords(address) for address in unique_addresses]
+        addresses_dict = dict(zip(unique_addresses, cords))
+
+        df["lat"] = df["address"].map(addresses_dict).apply(lambda x: x[0])
+        df["lon"] = df["address"].map(addresses_dict).apply(lambda x: x[1])
+
         apartments = [
             ApartmentBase(
                 address=a["address"],
                 link=a["url"],
-                lat=get_address_cords(a["address"])[0],
-                lon=get_address_cords(a["address"])[1],
+                lat=a["lat"],
+                lon=a["lon"],
                 rooms=a["rooms"],
-                segment=a["segment"],
+                segment=Segment(a["segment"]),
                 floors=a["floors"],
-                walls=Walls.UNSET if pd.isna(a["wall_material"]) else a["wall_material"],
+                walls=None if pd.isna(a["wall_material"]) else Walls(a["wall_material"]),
                 floor=a["floor"],
                 apartment_area=a["area"],
-                kitchen_area=-1 if pd.isna(a["kitchen_area"]) else a["kitchen_area"],
-                has_balcony=bool(a["balcony"]),
-                distance_to_metro=-1 if pd.isna(a["metro"]) else a["metro"],
-                quality=a["repair"],
-                m2price=-1,
+                kitchen_area=None if pd.isna(a["kitchen_area"]) else a["kitchen_area"],
+                has_balcony=None if pd.isna(a["balcony"]) else bool(a["balcony"]),
+                distance_to_metro=None if pd.isna(a["metro"]) else a["metro"],
+                quality=None if pd.isna(a["repair"]) else RepairType(a["repair"]),
+                m2price=None,
                 price=a["price"],
             )
             for a in df.to_dict(orient="records")

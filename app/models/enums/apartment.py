@@ -21,7 +21,6 @@ class Walls(str, BaseEnum):
     BRICK = "кирпич"
     PANEL = "панель"
     MONOLITH = "монолит"
-    UNSET = "не указано"
 
 
 class RepairType(str, BaseEnum):

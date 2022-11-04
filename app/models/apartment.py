@@ -3,21 +3,23 @@ from typing import Optional
 
 from pydantic import BaseModel, HttpUrl
 
+from .enums.apartment import RepairType, Segment, Walls
+
 
 class ApartmentBase(BaseModel):
     address: str
-    link: Optional[HttpUrl]
+    link: Optional[HttpUrl] = None
     lat: Decimal
     lon: Decimal
     rooms: int
-    segment: str
+    segment: Segment
     floors: int
-    walls: str
+    walls: Optional[Walls] = None
     floor: int
     apartment_area: int
-    kitchen_area: int
-    has_balcony: bool
-    distance_to_metro: int
-    quality: str
-    m2price: Optional[Decimal] = 0
-    price: Optional[int] = 0
+    kitchen_area: Optional[int] = None
+    has_balcony: Optional[bool] = None
+    distance_to_metro: Optional[int] = None
+    quality: Optional[RepairType] = None
+    m2price: Optional[Decimal] = None
+    price: Optional[int] = None

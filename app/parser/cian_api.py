@@ -320,7 +320,19 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         )
     ]
 
+    df["wall_material"] = df["wall_material"].apply(
+        lambda x: Walls.MONOLITH.value
+        if "монолитный" or "монолитно-кирпичный" in str(x).lower() in str(x).lower()
+        else Walls.PANEL.value
+        if "панельный" in str(x).lower()
+        else Walls.BRICK.value
+        if "кирпичный" in str(x).lower()
+        else np.nan
+    )
+
     df = df.drop(columns=["house"])
+
+    df.drop_duplicates(inplace=True)
 
     os.remove(downloaded_file)
 
