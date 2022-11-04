@@ -1,19 +1,18 @@
-from pathlib import Path
+import os.path
 
 from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from webdriver_manager.chrome import ChromeDriverManager
 
 
-def create() -> webdriver.Chrome:
+def create(unique_folder_name: str) -> webdriver.Chrome:
     chrome_options = webdriver.ChromeOptions()
+    default_directory = str(os.path.join("/tmp/data", unique_folder_name))
     prefs = {
         "profile.default_content_settings.popups": 0,
         "profile.managed_default_content_settings.images": 2,
         "download": {
             "prompt_for_download": False,
             "directory_upgrade": True,
-            "default_directory": '/tmp/data'
+            "default_directory": default_directory,
         },
     }
     chrome_options.add_experimental_option("prefs", prefs)

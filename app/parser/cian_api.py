@@ -6,7 +6,6 @@ import os
 import time
 from dataclasses import dataclass
 from enum import IntEnum
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -126,14 +125,17 @@ def get_url_by_cords(
 
     min_year, max_year = params.segment.get_min_max_years()
 
-    rooms = {
-        1: "room1=1",
-        2: "room2=1",
-        3: "room3=1",
-        4: "room4=1",
-        5: "room5=1",
-        6: "room6=1",
-    }[params.rooms]
+    try:
+        rooms = {
+            1: "room1=1",
+            2: "room2=1",
+            3: "room3=1",
+            4: "room4=1",
+            5: "room5=1",
+            6: "room6=1",
+        }[params.rooms]
+    except KeyError:
+        raise ValueError(f"Неподдерживаемое количество комнат: {params.rooms}")
 
     # # материал стен дома. Раскомментировать, если нужно
     # walls = f"house_material[0]={cian_house_material[params.walls]}"
@@ -146,7 +148,7 @@ def get_url_by_cords(
     year = f"min_house_year={min_year}&max_house_year={max_year}"
 
     # этажность
-    floors = f"minfloorn={params.floors}&maxfloorn={params.floors}"
+    floors = f"minfloorn={max(params.floors - 3, 1)}&maxfloorn={params.floors + 3}"
 
     url = ""
     if url_type == URLType.OFFER_LIST:
@@ -182,9 +184,10 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     url = get_url_by_cords(lat, lon, search_params, url_type=URLType.EXPORT)
 
-    downloaded_file = os.path.join("/app/app/parser/data/offers.xlsx")
+    unique_folder_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    downloaded_file = os.path.join(f"/app/app/parser/data/{unique_folder_name}/offers.xlsx")
 
-    with contextlib.closing(driver.create()) as chromium:
+    with contextlib.closing(driver.create(unique_folder_name)) as chromium:
         chromium.get(url)
 
         while True:
@@ -194,6 +197,9 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
                 break
 
     df = pd.read_excel(downloaded_file)
+
+    if len(df) < 1:
+        raise ValueError("Не найдено достаточного количества аналогов")
 
     df = df.rename(
         columns={
@@ -214,7 +220,6 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
             "Окна": "windows",
             "Санузел": "toilet",
             "Есть телефон": "has_phone",
-            "Серия дома": "house_series",
             "Высота потолков, м": "ceiling_height",
             "Лифт": "elevator",
             "Мусоропровод": "chute",
@@ -234,13 +239,15 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
             "windows",
             "toilet",
             "has_phone",
-            "house_series",
             "ceiling_height",
             "elevator",
             "chute",
             "project_name",
         ]
     )
+
+    # Concat dataframes
+    df = pd.concat([df, df["address"].str.split(", ", expand=True)], axis=1)
 
     df = df.drop_duplicates()
 
@@ -258,18 +265,23 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         lambda x: x is not np.nan and ("балкон" in str(x).lower() or "лоджия" in str(x).lower())
     )
 
-    # Удаленность от станции метро (в минутах ходьбы). Указано в 'метро'. Формат: "м. Кунцевская (5 мин пешком)"
-    df["metro"] = df["metro"].apply(lambda x: int(x.split("(")[1].split(" ")[0]) if "(" in x else np.nan)
+    # Удаленность от станции метро (в минутах ходьбы). Указано в 'метро'. Формат: "м. Кунцевская (5 мин пешком)".
+    # Внутри скобок может быть написано "None" (ошибка разрабов Циана, наверное). Пример: "м. Кунцевская (None)"
+    df["metro"] = df["metro"].apply(
+        lambda x: int(x.split("(")[1].split(" ")[0])
+        if x is not np.nan and x.split("(")[1].split(" ")[0] != "None"
+        else np.nan
+    )
 
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
     df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in x else int(x.strip()))
 
     # Этаж. Указан в 'house'. Формат: "9/14, Панельный", где 9 - этаж, 14 - этажность дома
-    df["floor"] = df["house"].apply(lambda x: int(x.split("/")[0]) if x != "nan" else np.nan)
+    df["floor"] = df["house"].apply(lambda x: int(x.split("/")[0]) if x is not np.nan else np.nan)
 
     # Этажность дома
-    df["floors"] = df["house"].apply(lambda x: int(x.split("/")[1].split(",")[0]) if x != "nan" else np.nan)
+    df["floors"] = df["house"].apply(lambda x: int(x.split("/")[1].split(",")[0]) if x is not np.nan else np.nan)
 
     # Сегмент (search_params.segment)
     df["segment"] = df.apply(lambda x: search_params.segment.value, axis=1)
@@ -294,18 +306,3 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     os.remove(downloaded_file)
 
     return df
-
-
-if __name__ == "__main__":
-    time_start = time.time()
-    address = "г. Москва, ул. Ватутина, д. 11"
-
-    search_params = SearchParams(
-        rooms=2,
-        segment=Segment.MODERN,
-        walls=Walls.BRICK,
-        floors=22,
-    )
-
-    df = parse_analogs(address, search_params)
-    df.to_excel("export.xlsx", index=False, encoding="utf-8")
