@@ -187,7 +187,8 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     unique_folder_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     downloaded_file = os.path.join(f"/app/app/parser/data/{unique_folder_name}/offers.xlsx")
 
-    with contextlib.closing(driver.create(unique_folder_name)) as chromium:
+    try:
+        chromium = driver.create(unique_folder_name)
         chromium.get(url)
 
         while True:
@@ -195,6 +196,10 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
             if os.path.exists(downloaded_file):
                 break
+    except Exception as e:
+        raise e
+    finally:
+        chromium.quit()
 
     df = pd.read_excel(downloaded_file)
 
