@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import datetime
 import os
 import time
@@ -308,16 +307,16 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     df = df.loc[
         (df["wall_material"].isnull())
         | (
-                search_params.walls == Walls.BRICK.value
-                and df["wall_material"].apply(lambda x: "кирпичный" == str(x).lower() or "сталинский" == str(x).lower())
+            search_params.walls == Walls.BRICK.value
+            and df["wall_material"].apply(lambda x: "кирпичный" == str(x).lower() or "сталинский" == str(x).lower())
         )
         | (
-                search_params.walls == Walls.MONOLITH.value
-                and df["wall_material"].apply(lambda x: "монолитный" in str(x).lower())
+            search_params.walls == Walls.MONOLITH.value
+            and df["wall_material"].apply(lambda x: "монолитный" in str(x).lower())
         )
         | (
-                search_params.walls == Walls.PANEL.value
-                and df["wall_material"].apply(lambda x: "панельный" in str(x).lower() or "блочный" in str(x).lower())
+            search_params.walls == Walls.PANEL.value
+            and df["wall_material"].apply(lambda x: "панельный" in str(x).lower() or "блочный" in str(x).lower())
         )
     ]
 

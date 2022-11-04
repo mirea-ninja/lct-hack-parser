@@ -32,6 +32,9 @@ class Config(_Settings):
 
     BACKEND_DADATA_TOKEN: str
 
+    BACKEND_AUTH_TOKEN: str
+    BACKEND_API_URL: str
+
 
 @lru_cache()
 def get_config(env_file: str = ".env") -> Config:

@@ -1,5 +1,9 @@
 import pandas as pd
+import requests
+from fastapi.encoders import jsonable_encoder
+from starlette.exceptions import HTTPException
 
+from app.config import config
 from app.models import ApartmentBase
 from app.models.enums import Walls
 from app.models.search import SearchBase
@@ -20,10 +24,10 @@ class CianService:
         )
 
         df = parse_analogs(address, search_params)
-
-        return [
+        apartments = [
             ApartmentBase(
                 address=a["address"],
+                link=a["url"],
                 lat=get_address_cords(a["address"])[0],
                 lon=get_address_cords(a["address"])[1],
                 rooms=a["rooms"],
@@ -41,3 +45,15 @@ class CianService:
             )
             for a in df.to_dict(orient="records")
         ]
+
+        headers = {
+            "Authorization": f"Bearer {config.BACKEND_AUTH_TOKEN}",
+        }
+
+        response = requests.post(
+            f"{config.BACKEND_API_URL}/query/{search.query_id}/subquery/{search.subquery_id}/analogs",
+            headers=headers,
+            json=jsonable_encoder(apartments),
+        )
+
+        return apartments

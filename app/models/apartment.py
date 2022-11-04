@@ -1,11 +1,12 @@
 from decimal import Decimal
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 
 class ApartmentBase(BaseModel):
     address: str
+    link: Optional[HttpUrl]
     lat: Decimal
     lon: Decimal
     rooms: int
