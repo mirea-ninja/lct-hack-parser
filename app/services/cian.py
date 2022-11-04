@@ -23,19 +23,19 @@ class CianService:
         return [
             ApartmentBase(
                 address=a["address"],
-                lat=0,
-                lon=0,
+                lat=-1,
+                lon=-1,
                 rooms=a["rooms"],
                 segment=a["segment"],
                 floors=a["floors"],
                 walls=Walls.UNSET if pd.isna(a["wall_material"]) else a["wall_material"],
                 floor=a["floor"],
                 apartment_area=a["area"],
-                kitchen_area=0 if pd.isna(a["kitchen_area"]) else a["kitchen_area"],
+                kitchen_area=-1 if pd.isna(a["kitchen_area"]) else a["kitchen_area"],
                 has_balcony=bool(a["balcony"]),
-                distance_to_metro=0 if pd.isna(a["metro"]) else a["metro"],
+                distance_to_metro=-1 if pd.isna(a["metro"]) else a["metro"],
                 quality=a["repair"],
-                m2price=0,
+                m2price=-1,
                 price=a["price"],
             )
             for a in df.to_dict(orient="records")
