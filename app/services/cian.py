@@ -1,7 +1,6 @@
 import pandas as pd
 import requests
 from fastapi.encoders import jsonable_encoder
-from starlette.exceptions import HTTPException
 
 from app.config import config
 from app.models import ApartmentBase
@@ -40,7 +39,7 @@ class CianService:
                 has_balcony=bool(a["balcony"]),
                 distance_to_metro=-1 if pd.isna(a["metro"]) else a["metro"],
                 quality=a["repair"],
-                m2price=-1,
+                m2price=a["price"] / a["area"],
                 price=a["price"],
             )
             for a in df.to_dict(orient="records")
