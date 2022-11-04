@@ -134,8 +134,8 @@ def get_url_by_cords(
             5: "room5=1",
             6: "room6=1",
         }[params.rooms]
-    except KeyError:
-        raise ValueError(f"Неподдерживаемое количество комнат: {params.rooms}")
+    except KeyError as e:
+        raise ValueError(f"Неподдерживаемое количество комнат: {params.rooms}") from e
 
     # # материал стен дома. Раскомментировать, если нужно
     # walls = f"house_material[0]={cian_house_material[params.walls]}"
@@ -228,25 +228,23 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         }
     )
 
-    df = df.drop(
-        columns=[
-            "id",
-            "type",
-            "parking",
-            "phones",
-            "description",
-            "rooms_area",
-            "windows",
-            "toilet",
-            "has_phone",
-            "ceiling_height",
-            "elevator",
-            "chute",
-        ]
-    )
-
-    if "project_name" in df.columns:
-        df = df.drop(columns=["project_name"])
+    for column in [
+        "id",
+        "type",
+        "parking",
+        "phones",
+        "description",
+        "rooms_area",
+        "windows",
+        "toilet",
+        "has_phone",
+        "ceiling_height",
+        "elevator",
+        "project_name",
+        "chute",
+    ]:
+        if column in df.columns:
+            df = df.drop(columns=[column])
 
     df = pd.concat([df, df["address"].str.split(", ", expand=True)], axis=1)
 
