@@ -35,7 +35,7 @@ class Message(BaseModel):
 
 
 endpoint_message = {
-    ("POST", "/parse"): "Ошибка парсинга parser.ru",
+    ("POST", "/parse"): "Ошибка парсинга cian.ru",
 }
 
 

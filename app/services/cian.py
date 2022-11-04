@@ -4,6 +4,7 @@ from app.models import ApartmentBase
 from app.models.enums import Walls
 from app.models.search import SearchBase
 from app.parser.cian_api import SearchParams, parse_analogs
+from app.parser.utils import get_address_cords
 
 
 class CianService:
@@ -23,8 +24,8 @@ class CianService:
         return [
             ApartmentBase(
                 address=a["address"],
-                lat=-1,
-                lon=-1,
+                lat=get_address_cords(a["address"])[0],
+                lon=get_address_cords(a["address"])[1],
                 rooms=a["rooms"],
                 segment=a["segment"],
                 floors=a["floors"],
