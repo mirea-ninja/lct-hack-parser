@@ -25,7 +25,7 @@ class Config(_Settings):
     BACKEND_PORT: int
     BACKEND_RELOAD: bool
 
-    BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
+    BACKEND_CORS_ORIGINS: List = ["*"]
 
     BACKEND_JWT_SECRET: str
     BACKEND_JWT_ALGORITHM: str

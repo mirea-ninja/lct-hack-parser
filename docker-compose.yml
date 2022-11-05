@@ -1,6 +1,20 @@
 version: "3.9"
 
 services:
+  proxy:
+    build:
+      context: ./proxy
+      dockerfile: Dockerfile
+    restart: on-failure
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ssl_data:/etc/resty-auto-ssl
+    environment:
+      ALLOWED_DOMAINS: "${BACKEND_ALLOWED_DOMAINS}"
+      SITES: "${BACKEND_ALLOWED_DOMAINS}=parser:70"
+
   parser:
     build: .
     volumes:
@@ -18,15 +32,12 @@ services:
       BACKEND_PORT: ${BACKEND_PORT}
       BACKEND_RELOAD: ${BACKEND_RELOAD}
 
-      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS}
-
       BACKEND_JWT_SECRET: ${BACKEND_JWT_SECRET}
       BACKEND_JWT_ALGORITHM: ${BACKEND_JWT_ALGORITHM}
 
       ENV: development
     networks:
       - default
-
 
   chrome:
     image: selenium/standalone-chrome:latest
@@ -38,3 +49,6 @@ services:
     environment:
       SE_NODE_OVERRIDE_MAX_SESSIONS: ${SE_NODE_OVERRIDE_MAX_SESSIONS}
       SE_NODE_MAX_SESSIONS: ${SE_NODE_MAX_SESSIONS}
+
+volumes:
+  ssl_data:
