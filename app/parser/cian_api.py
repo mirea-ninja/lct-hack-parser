@@ -335,6 +335,9 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     df.drop_duplicates(inplace=True)
 
+    if len(df) > 10:
+        df = df.loc[(df["kitchen_area"].notnull()) & (df["metro"].notnull())]
+
     os.remove(downloaded_file)
 
     return df
