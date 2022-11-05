@@ -21,6 +21,7 @@ class SearchParams:
     segment: Segment  # Сегмент
     floors: int  # Этажность дома
     walls: Walls  # Материал стен дома
+    radius: int = 1000  # Радиус поиска вокруг адреса
 
 
 class URLType(IntEnum):
@@ -181,7 +182,7 @@ def get_url_by_cords(
 def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     lat, lon = get_address_cords(address)
 
-    url = get_url_by_cords(lat, lon, search_params, url_type=URLType.EXPORT)
+    url = get_url_by_cords(lat, lon, search_params, radius=search_params.radius, url_type=URLType.EXPORT)
 
     unique_folder_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     downloaded_file = os.path.join(f"/app/app/parser/data/{unique_folder_name}/offers.xlsx")
@@ -322,7 +323,7 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     df["wall_material"] = df["wall_material"].apply(
         lambda x: Walls.MONOLITH.value
-        if "монолитный" or "монолитно-кирпичный" in str(x).lower() in str(x).lower()
+        if "монолитный" in str(x).lower() or "монолитно-кирпичный" in str(x).lower()
         else Walls.PANEL.value
         if "панельный" in str(x).lower()
         else Walls.BRICK.value

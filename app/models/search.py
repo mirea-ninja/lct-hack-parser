@@ -13,3 +13,4 @@ class SearchBase(BaseModel):
     segment: Segment
     floors: int
     walls: Walls
+    radius: int = 1000

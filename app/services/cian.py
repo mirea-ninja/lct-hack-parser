@@ -20,6 +20,7 @@ class CianService:
             segment=search.segment,
             walls=search.walls,
             floors=search.floors,
+            radius=search.radius,
         )
 
         df = parse_analogs(address, search_params)
