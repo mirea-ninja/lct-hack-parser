@@ -34,6 +34,8 @@ class CianService:
         df["lat"] = df["address"].map(addresses_dict).apply(lambda x: x[0])
         df["lon"] = df["address"].map(addresses_dict).apply(lambda x: x[1])
 
+        df = df.dropna(subset=["lat", "lon"])
+
         apartments = [
             ApartmentBase(
                 address=a["address"],
