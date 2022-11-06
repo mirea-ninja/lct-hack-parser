@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -16,7 +17,7 @@ class SearchBase(BaseModel):
     segment: str = Field(example="новостройка", description="Сегмент")
     floors: int = Field(example=5, description="Этажность дома")
     walls: str = Field(example="кирпич", description="Материал стен")
-    radius: int = Field(example=1500, description="Радиус поиска")
+    radius: Optional[int] = Field(example=1500, description="Радиус поиска")
 
     class Config:
         alias_generator = to_camel_case
