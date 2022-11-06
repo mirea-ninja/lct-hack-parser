@@ -188,7 +188,6 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     unique_folder_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     downloaded_file = os.path.join(f"/app/app/parser/data/{unique_folder_name}/offers.xlsx")
 
-
     time_passed = 0
     try:
         chromium = driver.create(unique_folder_name)
@@ -202,7 +201,7 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
                 break
             if time_passed > 10:
                 raise TimeoutError("Не удалось скачать файл")
-            
+
     except Exception as e:
         raise e
     finally:
@@ -284,13 +283,12 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         else np.nan
     )
 
-   
     df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower())]
-    
+
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
     df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in str(x) else int(x))
-    
+
     # Если без типа, то это студия
     df["rooms"] = df["rooms"].apply(lambda x: int(x) if x is not np.nan else 0)
 
