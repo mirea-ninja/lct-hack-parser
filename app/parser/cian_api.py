@@ -287,12 +287,12 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
    
     df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower())]
     
-    # Если без типа, то это студия
-    df["rooms"] = df["rooms"].apply(lambda x: int(x) if x is not np.nan else 0)
-
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
     df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in str(x) else int(x))
+    
+    # Если без типа, то это студия
+    df["rooms"] = df["rooms"].apply(lambda x: int(x) if x is not np.nan else 0)
 
     # Этаж. Указан в 'house'. Формат: "9/14, Панельный", где 9 - этаж, 14 - этажность дома
     df["floor"] = df["house"].apply(lambda x: int(x.split("/")[0]) if x is not np.nan else np.nan)
