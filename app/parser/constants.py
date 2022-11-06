@@ -25,4 +25,4 @@ class Segment(Enum):
 class RepairType(Enum):
     WITHOUT_REPAIR = "без отделки"
     MUNICIPAL_REPAIR = "муниципальный ремонт"
-    MODERN_REPAIR = "современная ремонт"
+    MODERN_REPAIR = "современная отделка"
