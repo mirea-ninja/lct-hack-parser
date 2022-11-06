@@ -16,8 +16,8 @@ class ApartmentBase(BaseModel):
     floors: int
     walls: Optional[Walls] = None
     floor: int
-    apartment_area: int
-    kitchen_area: Optional[int] = None
+    apartment_area: Decimal
+    kitchen_area: Optional[Decimal] = None
     has_balcony: Optional[bool] = None
     distance_to_metro: Optional[int] = None
     quality: Optional[RepairType] = None
