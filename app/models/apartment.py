@@ -21,5 +21,5 @@ class ApartmentBase(BaseModel):
     has_balcony: Optional[bool] = None
     distance_to_metro: Optional[int] = None
     quality: Optional[RepairType] = None
-    m2price: Optional[Decimal] = None
+    m2price: Optional[int] = None
     price: Optional[int] = None
