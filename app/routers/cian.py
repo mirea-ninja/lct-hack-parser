@@ -22,4 +22,8 @@ def parse(search: SearchBase, cian_service: CianService = Depends()):
     try:
         return cian_service.start_parse(search=search)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e)) from e
+        raise HTTPException(
+            status_code=status.HTTP_504_GATEWAY_TIMEOUT if isinstance(e, TimeoutError) else status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e),
+        ) from e
+  
