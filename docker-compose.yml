@@ -46,6 +46,8 @@ services:
       - ./app/parser/data/:/tmp/data
     ports:
       - "4444:4444"
+    depends_on:
+      - parser
     environment:
       SE_NODE_OVERRIDE_MAX_SESSIONS: ${SE_NODE_OVERRIDE_MAX_SESSIONS}
       SE_NODE_MAX_SESSIONS: ${SE_NODE_MAX_SESSIONS}
