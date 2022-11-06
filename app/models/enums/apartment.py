@@ -26,4 +26,4 @@ class Walls(str, BaseEnum):
 class RepairType(str, BaseEnum):
     WITHOUT_REPAIR = "без отделки"
     MUNICIPAL_REPAIR = "муниципальный ремонт"
-    MODERN_REPAIR = "современный ремонт"
+    MODERN_REPAIR = "современная отделка"
