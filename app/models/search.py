@@ -2,6 +2,7 @@ from typing import Optional
 from uuid import UUID
 
 from pydantic import BaseModel, Field
+from app.models.enums import Segment, Walls
 
 
 def to_camel_case(string: str) -> str:
@@ -14,9 +15,9 @@ class SearchBase(BaseModel):
     subquery_id: UUID = Field(example="a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11", description="Идентификатор подзапроса")
     address: str = Field(example="Удальцова 5", description="Адрес квартиры")
     rooms: int = Field(example=2, description="Количество комнат")
-    segment: str = Field(example="новостройка", description="Сегмент")
+    segment: Segment = Field(example="новостройка", description="Сегмент")
     floors: int = Field(example=5, description="Этажность дома")
-    walls: str = Field(example="кирпич", description="Материал стен")
+    walls: Walls = Field(example="кирпич", description="Материал стен")
     radius: Optional[int] = Field(example=1500, description="Радиус поиска")
 
     class Config:
