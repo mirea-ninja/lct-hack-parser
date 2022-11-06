@@ -188,15 +188,21 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     unique_folder_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     downloaded_file = os.path.join(f"/app/app/parser/data/{unique_folder_name}/offers.xlsx")
 
+
+    time_passed = 0
     try:
         chromium = driver.create(unique_folder_name)
         chromium.get(url)
 
         while True:
             time.sleep(0.1)
+            time_passed += 0.1
 
             if os.path.exists(downloaded_file):
                 break
+            if time_passed > 10:
+                raise TimeoutError("Не удалось скачать файл")
+            
     except Exception as e:
         raise e
     finally:
