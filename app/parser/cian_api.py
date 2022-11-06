@@ -127,6 +127,7 @@ def get_url_by_cords(
 
     try:
         rooms = {
+            0: "room9=1",
             1: "room1=1",
             2: "room2=1",
             3: "room3=1",
@@ -276,6 +277,12 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         if x is not np.nan and x.split("(")[1].split(" ")[0] != "None"
         else np.nan
     )
+
+   
+    df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower())]
+    
+    # Если без типа, то это студия
+    df["rooms"] = df["rooms"].apply(lambda x: int(x) if x is not np.nan else 0)
 
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
