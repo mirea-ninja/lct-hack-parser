@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import List
 
 from dotenv import find_dotenv
-from pydantic import AnyHttpUrl, BaseSettings
+from pydantic import BaseSettings
 
 
 class _Settings(BaseSettings):
