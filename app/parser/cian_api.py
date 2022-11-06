@@ -279,7 +279,7 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
-    df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in x else int(x.strip()))
+    df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in str(x) else int(x))
 
     # Этаж. Указан в 'house'. Формат: "9/14, Панельный", где 9 - этаж, 14 - этажность дома
     df["floor"] = df["house"].apply(lambda x: int(x.split("/")[0]) if x is not np.nan else np.nan)
@@ -292,7 +292,7 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
 
     # Материал стен. Указан в Указан в 'house'. Формат: "9/14, Панельный", где "Панельный" - материал стен.
     # Может быть не указан!
-    df["wall_material"] = df["house"].apply(lambda x: x.split(",")[1].strip() if "," in x else np.nan)
+    df["wall_material"] = df["house"].apply(lambda x: x.split(",")[1].strip() if "," in str(x) else np.nan)
 
     # Ремонт. "Без ремонта" - без отделки, "Евроремонт" - современный, "Косметический" - муниципальный ремонт
     df["repair"] = df["repair"].apply(
