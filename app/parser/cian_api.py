@@ -5,6 +5,7 @@ import os
 import time
 from dataclasses import dataclass
 from enum import IntEnum
+import math
 
 import numpy as np
 import pandas as pd
@@ -287,7 +288,10 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         else np.nan
     )
 
-    df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower())]
+    # Covert math.isnan to np.nan if value is math.isnan (not str) in rooms
+    df["rooms"] = df["rooms"].apply(lambda x: np.nan if not isinstance(x, str) and math.isnan(x) else x)
+
+    df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower() and "апартаменты" not in str(x).lower())]
 
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
