@@ -212,32 +212,36 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
     if len(df) < 1:
         raise ValueError("Не найдено достаточного количества аналогов")
 
-    df = df.rename(
-        columns={
-            "ID": "id",
-            "Количество комнат": "rooms",
-            "Тип": "type",
-            "Метро": "metro",
-            "Адрес": "address",
-            "Площадь, м2": "area",
-            "Дом": "house",
-            "Парковка": "parking",
-            "Цена": "price",
-            "Телефоны": "phones",
-            "Описание": "description",
-            "Ремонт": "repair",
-            "Площадь комнат, м2": "rooms_area",
-            "Балкон": "balcony",
-            "Окна": "windows",
-            "Санузел": "toilet",
-            "Есть телефон": "has_phone",
-            "Высота потолков, м": "ceiling_height",
-            "Лифт": "elevator",
-            "Мусоропровод": "chute",
-            "Ссылка на объявление": "url",
-            "Название ЖК": "project_name",
-        }
-    )
+    columns = {
+        "ID": "id",
+        "Количество комнат": "rooms",
+        "Тип": "type",
+        "Метро": "metro",
+        "Адрес": "address",
+        "Площадь, м2": "area",
+        "Дом": "house",
+        "Парковка": "parking",
+        "Цена": "price",
+        "Телефоны": "phones",
+        "Описание": "description",
+        "Ремонт": "repair",
+        "Площадь комнат, м2": "rooms_area",
+        "Балкон": "balcony",
+        "Окна": "windows",
+        "Санузел": "toilet",
+        "Есть телефон": "has_phone",
+        "Высота потолков, м": "ceiling_height",
+        "Лифт": "elevator",
+        "Мусоропровод": "chute",
+        "Ссылка на объявление": "url",
+        "Название ЖК": "project_name",
+    }
+
+    df = df.rename(columns=columns)
+
+    for column in columns.values():
+        if column not in df.columns:
+            df[column] = np.nan
 
     for column in [
         "id",
