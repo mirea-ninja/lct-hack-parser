@@ -288,17 +288,15 @@ def parse_analogs(address: str, search_params: SearchParams) -> pd.DataFrame:
         else np.nan
     )
 
-    # Covert math.isnan to np.nan if value is math.isnan (not str) in rooms
-    df["rooms"] = df["rooms"].apply(lambda x: np.nan if not isinstance(x, str) and math.isnan(x) else x)
+    # Если без типа, то это студия
+    df["rooms"] = df["rooms"].apply(lambda x: 0 if x is np.nan or x is None or x is math.nan else x)
 
-    df = df.loc[df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower() and "апартаменты" not in str(x).lower())]
+    df = df.loc[
+        df["rooms"].apply(lambda x: "аппартаменты" not in str(x).lower() and "апартаменты" not in str(x).lower())]
 
     # Количество комнат. Указано в 'rooms'. Формат: "2, Изолированная", где 2 - количество комнат.
     # Тип может быть не указан.
-    df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in str(x) else int(x))
-
-    # Если без типа, то это студия
-    df["rooms"] = df["rooms"].apply(lambda x: int(x) if x is not np.nan else 0)
+    df["rooms"] = df["rooms"].apply(lambda x: int(x.split(",")[0]) if "," in str(x) else x)
 
     # Этаж. Указан в 'house'. Формат: "9/14, Панельный", где 9 - этаж, 14 - этажность дома
     df["floor"] = df["house"].apply(lambda x: int(x.split("/")[0]) if x is not np.nan else np.nan)
